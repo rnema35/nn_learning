@@ -13,9 +13,6 @@ class NN:
         for l in range(1, self.num_layers): #skip the input layer of parameters
             self.params['W'+str(l)] = np.random.randn(layers[l], layers[l-1]) #matrix m x n, where m neurons in layer l, and n are the nuerons in the layer before
             self.params['B'+str(l)] = np.zeros((layers[l], 1)) #matrix m x 1
-
-        # for key, value in self.params.items():
-        #     print(f"KEY: {key} ; VALUE and Shape: \n {value.shape} \n {value}")
     
     def train(self, training_data, test_data, epochs, learning_rate):       
         print("<------------------> Training Stochastic <------------------>")
@@ -73,14 +70,8 @@ class NN:
             if a.ndim == 1:
                 a = a.reshape((a.shape[0], 1))
 
-            # print(f"bias shape, layer {l}: {bias.shape}")
-            # print(f"z shape, layer {l}: {z.shape}")
-            # print(f"a shape, layer {l}: {a.shape}")
-
             self.cache_zs.append(z)
             self.cache_activations.append(a)
-
-        #a is the same thing as the activations in this case -> haven't argmaxed it or anything
         return a
     
     def backprop(self, output, g_t):
@@ -91,16 +82,11 @@ class NN:
         #the loss for the output layer, computing vector Delta_L = Gradtiant_a(Cost) * sigmoid_prime(z_L)
         #quadratic cost derivative is the graidant take with respect to a
 
-        z_L = self.cache_zs[-1] #the out out z
-        # print(f"z_L shape: {z_L.shape}")
+        z_L = self.cache_zs[-1] #the output z
 
         #activation and output are the same
         #delta_l = self.quadratic_cost_deriv(output=output, g_t=g_t) * self.get_sigmoid_derivative(z_L)
         delta_l = self.quadratic_cost_deriv(output=output, g_t=g_t) * self.get_relu_derivative(z_L)
-
-
-        # print(f"delta_l for the last layer and shape: {delta_l.shape}, {delta_l}")
-        # print(f"cache activations second to last layer: {self.cache_activations[-2].shape}, {self.cache_activations[-2]}")
 
         bias_changes['B'+str(self.num_layers-1)] = delta_l
         weight_changes['W'+str(self.num_layers-1)] = np.dot(delta_l, self.cache_activations[-2].T) #needs the activations from the previous layer
@@ -112,11 +98,6 @@ class NN:
 
             a = self.cache_activations[l-1] #would also be one layer behind l
             w = self.params['W'+str(l+1)] #get one layer ahead
-
-            # print(f"z and its shape: {z.shape} \n {z}")
-            # print(f"weights and its shape: {w.shape} \n {w}")
-            # print(f"delta_l and its shape: {delta_l.shape} \n {delta_l}")
-            #print(f"relu prime z and its shape: {relu_prime_z.shape} \n {relu_prime_z}")
 
             #the delta_l would be stored from previous, would already be a layer ahead
             #delta_l = np.dot(w.T, delta_l) * sigmoid_prime_z #from equation, loss resepect to the cost/activatoins
@@ -132,9 +113,6 @@ class NN:
         
         weight_changes, bias_changes = self.backprop(output=output, g_t=g_t)
 
-        #print(f"weight change dict: {weight_changes}")
-        #print(f"bias change dict: {bias_changes}")
-
         for l in range(1, self.num_layers):
             weight = self.params['W'+str(l)]
             bias = self.params['B'+str(l)]
@@ -148,9 +126,6 @@ class NN:
             gradiant_sums['W'+str(l)] = np.zeros((self.layers[l], self.layers[l-1])) #matrix m x n, where m neurons in layer l, and n are the nuerons in the layer before
             gradiant_sums['B'+str(l)] = np.zeros((self.layers[l], 1)) #matrix m x 1
 
-        # for key, value in gradiant_sums.items():
-        #      print(f"Gradiant KEY: {key} ; Shape and VALUE: \n {value.shape} \n {value}")
-
         for x, y in mini_batch:
             output = self.feedforward(x) #need to cache the zs and as
             gradiant_w, gradiant_b = self.backprop(output, y)
@@ -158,17 +133,10 @@ class NN:
             for l in range(1, self.num_layers):
                 gradiant_sums['W'+str(l)] += gradiant_w['W'+str(l)] 
                 gradiant_sums['B'+str(l)] += gradiant_b['B'+str(l)]
-            
-        # for key, value in gradiant_sums.items():
-        #     print(f"Gradiant KEY:{key}; Shape and VALUE: \n {value.shape} \n {value}")
-        
+                 
         for l in range(1, self.num_layers):
-            #print(f"Before KEY: {'W'+str(l)} ; Shape and VALUE: \n {self.params['W'+str(l)].shape} \n {self.params['W'+str(l)] }")
-            #print(f"Before KEY: {'B'+str(l)} ; Shape and VALUE: \n {self.params['B'+str(l)].shape} \n {self.params['B'+str(l)] }")
             self.params['W'+str(l)] -= ((learning_rate / len(mini_batch)) * gradiant_sums['W'+str(l)])  
             self.params['B'+str(l)] -= ((learning_rate / len(mini_batch)) * gradiant_sums['B'+str(l)])
-            #print(f"After KEY: {'W'+str(l)} ; Shape and VALUE: \n {self.params['W'+str(l)].shape} \n {self.params['W'+str(l)] }")
-            #print(f"After KEY: {'B'+str(l)} ; Shape and VALUE: \n {self.params['B'+str(l)].shape} \n {self.params['B'+str(l)] }")
 
     def quad_compute_loss(self, data):
         loss = 0
@@ -183,9 +151,6 @@ class NN:
         return loss
 
     def accuracy(self, test_data):
-        # results = [(np.argmax(self.feedforward(x)), y) for (x,y) in test_data]
-        # return sum(int(x==y) for (x,y) in results)
-
         correct = 0
         total = len(test_data)
 
@@ -203,9 +168,7 @@ class NN:
         return loss_deriv
 
     def sigmoid(self, z):
-        #print(f"z getting sigmoided shape: {z.shape}")
-        output = 1.0 / (1.0 + np.exp(-z))  
-        #print(f"z that got sigmoided shape: {output.shape}")
+        output = 1.0 / (1.0 + np.exp(-z))
         return output
 
     def get_sigmoid_derivative(self, z):
@@ -227,4 +190,18 @@ class NN:
             full_output.append(hypo_x_flattened)
 
         return np.array(full_output)    
+    
 ######################################################################################################################################################
+
+X_train = np.random.randn(1000, 2)
+y_train = np.array([4*a + b for a, b in X_train])
+
+X_test = np.random.randn(1000, 2)
+y_test = np.array([4*a + b for a, b in X_test])
+
+training_data = list(zip(X_train, y_train))
+test_data = list(zip(X_test, y_test))
+
+layer_sizes = [2, 1, 1]
+nn = NN(layer_sizes)
+nn.mini_batch_train(training_data, test_data, epochs=10, learning_rate=0.1, batch_size=1)

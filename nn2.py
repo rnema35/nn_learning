@@ -8,7 +8,7 @@ class NN:
         self.cache = {}
 
         for l in range(1, self.num_layers):
-            self.params['W'+str(l)] = np.random.rand(layers[l], layers[l-1]) # m x n matrix
+            self.params['W'+str(l)] = np.random.rand(layers[l], layers[l-1]) * 0.1 # m x n matrix
             self.params['B'+str(l)] = np.zeros((layers[l], 1)) # n x 1 vector
 
     def mini_batch_train(self, training_data, test_data, epochs, learning_rate, batch_size = 32):
@@ -99,21 +99,19 @@ class NN:
         return weight_gradiant, bias_gradiant
 
     def linear_activation(self, z):
-        const  = 1
-        return z * const
+        const = 1
+        return z * 1
 
     def linear_derivative(self, z):
         return 1
     
-    def quad_cost_loss(self, training_data):
+    def quad_cost_loss(self, data):
         loss = 0
+        for x, y in data:
+            output = self.feedforward(x)
+            loss += np.sum((output - y) ** 2) / 2
 
-        for x, y in training_data:
-            x_hypo = self.feedforward(x)
-
-            loss += np.sum((x_hypo - y) ** 2) / 2
-            
-        return loss / len(training_data)
+        return loss
 
     def quad_cost_deriv(self, x, y):
         loss_deriv = x - y
@@ -125,21 +123,34 @@ class NN:
 
         for x, y in data:
             output = self.feedforward(x)
-            correct += int(output == y)
+            if np.isclose(output, y, atol= 1e-9):
+                correct += 1
     
         return correct / total
 
+    def get_results(self, data):
+        results = []
+
+        for x, y in data:
+            results.append(self.feedforward(x)[0][0])
+
+        return results
+
 ###########################################################################################################3
 
-X_train = np.random.randn(1000, 2)
-y_train = np.array([4*a + b for a, b in X_train])
+X_train = np.random.rand(1000, 2)
+y_train = np.array([5*a + 2*b for a, b in X_train])
 
-X_test = np.random.randn(1000, 2)
-y_test = np.array([4*a + b for a, b in X_test])
+X_test = np.random.rand(1000, 2)
+y_test = np.array([5*a + 2*b for a, b in X_test])
 
 training_data = list(zip(X_train, y_train))
 test_data = list(zip(X_test, y_test))
 
-layer_sizes = [2, 1, 1]
+layer_sizes = [2, 3, 1]
 nn = NN(layer_sizes)
-nn.mini_batch_train(training_data, test_data, epochs=10, learning_rate=0.1, batch_size=1)
+nn.mini_batch_train(training_data, test_data, epochs=15, learning_rate=0.01, batch_size=1)
+
+results = nn.get_results(training_data)
+
+#print(results)
