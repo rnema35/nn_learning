@@ -1,0 +1,41 @@
+how to make a neural net for the mnist data set
+-> convert 28x28 images by flattening them into a 784 array
+-> hopefully get to two hidden layers, but first will have only 1 w/ 15 nodes
+-> 10 output nodes
+
+-> need to take inputs
+-> define layers
+    -> weights and biases per node per layer
+        - initialize randomly?
+    -> activation function for each node
+
+-> feedforward
+    -> take nodes and pass it on
+
+->backprop
+    -> define loss funciton
+    -> calculate loss
+    -> determine the delta based on derivatives
+    -> adjust weights and biases
+
+-> repeat for epochs
+----------------------------------------------------------------------------------
+
+processing one point at a time:
+
+-> repeat for # epochs
+    Loss = 0
+    For each point
+    -> get the point
+    -> get hypothesis from feedforward, loss from cost, add to loss
+    -> then use back propagation to get change of weights/bias
+    -> update weights
+     
+
+
+---------------------------------------------------------------------------------
+
+initialiizing epochs gives me a loss of 500, but at 15 only 250, 
+    what could be the case
+    loss is calculated per epcoh seperaltey, the amount of epochs should not matter
+    
