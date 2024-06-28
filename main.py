@@ -1,5 +1,4 @@
-#from nn import *
-from nn2 import *
+from nn import *
 
 X_train = np.random.randn(1000, 2)
 y_train = np.array([4*a + b for a, b in X_train])
