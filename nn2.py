@@ -1,6 +1,7 @@
 import numpy as np
 from functions import *
 
+#FIX THE WAY TO HANDLE THE INPUT LAYER
 class Layer: 
     def __init__(self, input_dim, output_dim, activation):
         self.weights = np.random.randn(input_dim, output_dim) * 0.1 # m x n matrix
@@ -89,21 +90,21 @@ class NN:
         z_L = self.cache['zs'+str(self.num_layers - 1)]
         a_L = self.cache['activations'+str(self.num_layers-1)]
 
-        # FIX THIS LINE #
-        delta_l = self.quad_cost_deriv(a_L, y) * self.linear_derivative(z_L)
+        # MAYBE - update the way to get the quadratic cost loss #
+        delta_l = self.quad_cost_deriv(a_L, y) * linear_derivative(z_L)
 
         bias_gradiant['B'+str(self.num_layers-1)] = delta_l
         weight_gradiant['W'+str(self.num_layers-1)] = np.dot(delta_l, self.cache['activations'+str(self.num_layers-2)].T)
 
-        # FIX THIS LOOP #
         for l in range(self.num_layers-2, 0, -1):
+            # MAKE SURE THIS IS WORKING RIGHT #
+            layer = self.layers[l]
+
             z = self.cache['zs'+str(l)]
-            liner_der_z = self.linear_derivative(z)
+            liner_der_z = linear_derivative(z)
 
             a = self.cache['activations'+str(l-1)]
-
-            #FIX THIS PARAMATER FETCH #
-            w = self.params['W'+str(l+1)]
+            w = layer.weights
 
             delta_l = np.dot(w.T, delta_l) * liner_der_z
 
@@ -111,3 +112,47 @@ class NN:
             bias_gradiant['B'+str(l)] = delta_l
 
         return weight_gradiant, bias_gradiant
+    
+    def quad_cost_loss(self, data):
+        loss = 0
+        for x, y in data:
+            output = self.feedforward(x)
+            loss += np.sum((output - y) ** 2) / 2
+
+    def quad_cost_deriv(self, x, y):
+            loss_deriv = x - y
+            return loss_deriv
+    
+    def compute_accuracy(self, data):
+        correct = 0
+        total = len(data)
+
+        for x, y in data:
+            output = self.feedforward(x)
+            if np.isclose(output, y, atol= 1e-9):
+                correct += 1
+    
+        return correct / total
+    
+    def get_results(self, data):
+        results = []
+
+        for x, y in data:
+            results.append(self.feedforward(x)[0][0])
+
+        return results
+
+###########################################################################################################3
+
+X_train = np.random.rand(1000, 2)
+y_train = np.array([5*a + 2*b for a, b in X_train])
+noise_train = np.random.normal(0, 0.5, y_train.shape)
+y_train_noisy = y_train + noise_train
+
+X_test = np.random.rand(1000, 2)
+y_test = np.array([5*a + 2*b for a, b in X_test])
+noise_test = np.random.normal(0, 0.5, y_test.shape)
+y_test_noisy = y_test + noise_test
+
+training_data = list(zip(X_train, y_train))
+test_data = list(zip(X_test, y_test))
