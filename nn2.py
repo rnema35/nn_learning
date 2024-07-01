@@ -1,12 +1,41 @@
 import numpy as np
 from functions import *
 
-#FIX THE WAY TO HANDLE THE INPUT LAYER
+#Input layer handeled?
 class Layer: 
-    def __init__(self, input_dim, output_dim, activation):
-        self.weights = np.random.randn(input_dim, output_dim) * 0.1 # m x n matrix
-        self.bias = np.zeros((output_dim, 1)) # m x 1 matrix
-        self.activation = activation
+    def __init__(self, input_dim, output_dim, activation, input_layer = False):
+        if not input_layer:
+            self.weights = np.random.randn(output_dim, input_dim) * 0.1 # m x n matrix
+            self.bias = np.zeros((output_dim, 1)) # m x 1 matrix
+        else: 
+            self.weights = None
+            self.bias = None
+        
+        self.activation = activation #i'll define a custom activation to ignore inputs
+
+    #to compute the activation
+    def get_activation(self, z):
+        if self.activation == 'sigmoid':
+            return sigmoid(z)
+        elif self.activation == 'relu':
+            return relu(z)
+        elif self.activation == 'linear':
+            return linear_activation(z)
+        else:
+            print('we should not be here!')
+            return 1
+
+    #to compute the derivative
+    def get_activation_deriv(self, z):
+        if self.activation == 'sigmoid':
+            return sigmoid_derivative(z)
+        elif self.activation == 'relu':
+            return relu_derivative(z)
+        elif self.activation == 'linear':
+            return linear_derivative(z)
+        else:
+            print('we should not be here!')
+            return 0
 
 class NN: 
     def __init__(self, layers):
@@ -58,7 +87,7 @@ class NN:
             layer.weights -= ((gradiant_sums['W'+str(l)]) * (learning_rate / batch_len))
             layer.bias -= ((gradiant_sums['B'+str(l)]) * (learning_rate / batch_len))
 
-    #update the way to get weights and biases
+    #update the way to get weights and biases, and how it gets activations
     def feedforward(self, x):
         self.cache = {}
 
@@ -73,7 +102,7 @@ class NN:
             bias = layer.bias
 
             z = np.dot(weights, a_prev) + bias
-            a = self.linear_activation(z)
+            a = layer.get_activation(z)
             if a.ndim == 1:
                 a = a.reshape((a.shape[0], 1))
 
@@ -82,7 +111,7 @@ class NN:
 
         return a
     
-    # NEED TO FIX THIS - IN PROGRESS #
+    #update how it gets activation derivatives
     def backprop(self, x, y):
         weight_gradiant = {}
         bias_gradiant = {} 
@@ -91,20 +120,24 @@ class NN:
         a_L = self.cache['activations'+str(self.num_layers-1)]
 
         # MAYBE - update the way to get the quadratic cost loss #
-        delta_l = self.quad_cost_deriv(a_L, y) * linear_derivative(z_L)
+        final_layer = self.layers[-1]
+        delta_l = self.quad_cost_deriv(a_L, y) * final_layer.get_activation_deriv(z_L)
 
         bias_gradiant['B'+str(self.num_layers-1)] = delta_l
         weight_gradiant['W'+str(self.num_layers-1)] = np.dot(delta_l, self.cache['activations'+str(self.num_layers-2)].T)
 
+        #go backwards
         for l in range(self.num_layers-2, 0, -1):
             # MAKE SURE THIS IS WORKING RIGHT #
-            layer = self.layers[l]
+            currlayer = self.layers[l]
+            #prevLayer = self.layers[l-1]
+            nextLayer = self.layers[l+1]
 
             z = self.cache['zs'+str(l)]
-            liner_der_z = linear_derivative(z)
+            liner_der_z = currlayer.get_activation_deriv(z)
 
             a = self.cache['activations'+str(l-1)]
-            w = layer.weights
+            w = nextLayer.weights
 
             delta_l = np.dot(w.T, delta_l) * liner_der_z
 
@@ -113,6 +146,8 @@ class NN:
 
         return weight_gradiant, bias_gradiant
     
+
+    #no need to change any of these
     def quad_cost_loss(self, data):
         loss = 0
         for x, y in data:
@@ -156,3 +191,10 @@ y_test_noisy = y_test + noise_test
 
 training_data = list(zip(X_train, y_train))
 test_data = list(zip(X_test, y_test))
+
+input = Layer(0, 2, 'input', True)
+hidden_one = Layer(2, 3, 'linear', False)
+output = Layer(3, 1, 'linear', False)
+Layers = [input, hidden_one, output]
+nn = NN(layers=Layers)
+nn.mini_batch_train(training_data=training_data, test_data=test_data, epochs=10, learning_rate=0.1)

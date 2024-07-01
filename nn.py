@@ -153,6 +153,6 @@ test_data = list(zip(X_test, y_test))
 
 layer_sizes = [2, 3, 1]
 nn = NN(layer_sizes)
-nn.mini_batch_train(training_data, test_data, epochs=10, learning_rate=0.01, batch_size=1)
+nn.mini_batch_train(training_data, test_data, epochs=10, learning_rate=0.12, batch_size=32)
 
 results = nn.get_results(training_data)
