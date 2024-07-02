@@ -146,7 +146,6 @@ class NN:
 
         return weight_gradiant, bias_gradiant
     
-
     #no need to change any of these
     def quad_cost_loss(self, data):
         loss = 0
@@ -179,24 +178,3 @@ class NN:
 
         return results
 
-###########################################################################################################3
-
-X_train = np.random.rand(1000, 2)
-y_train = np.array([5*a + 2*b for a, b in X_train])
-noise_train = np.random.normal(0, 0.5, y_train.shape)
-y_train_noisy = y_train + noise_train
-
-X_test = np.random.rand(1000, 2)
-y_test = np.array([5*a + 2*b for a, b in X_test])
-noise_test = np.random.normal(0, 0.5, y_test.shape)
-y_test_noisy = y_test + noise_test
-
-training_data = list(zip(X_train, y_train))
-test_data = list(zip(X_test, y_test))
-
-input = Layer(0, 2, 'input', True)
-hidden_one = Layer(2, 3, 'linear', False)
-output = Layer(3, 1, 'linear', False)
-Layers = [input, hidden_one, output]
-nn = NN(layers=Layers)
-nn.mini_batch_train(training_data=training_data, test_data=test_data, epochs=10, learning_rate=0.1, batch_size= 5)

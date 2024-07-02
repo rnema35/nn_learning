@@ -135,24 +135,3 @@ class NN:
             results.append(self.feedforward(x)[0][0])
 
         return results
-
-###########################################################################################################3
-
-X_train = np.random.rand(1000, 2)
-y_train = np.array([5*a + 2*b for a, b in X_train])
-noise_train = np.random.normal(0, 0.5, y_train.shape)
-y_train_noisy = y_train + noise_train
-
-X_test = np.random.rand(1000, 2)
-y_test = np.array([5*a + 2*b for a, b in X_test])
-noise_test = np.random.normal(0, 0.5, y_test.shape)
-y_test_noisy = y_test + noise_test
-
-training_data = list(zip(X_train, y_train))
-test_data = list(zip(X_test, y_test))
-
-layer_sizes = [2, 3, 1]
-nn = NN(layer_sizes)
-nn.mini_batch_train(training_data, test_data, epochs=10, learning_rate=0.12, batch_size=32)
-
-results = nn.get_results(training_data)

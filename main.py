@@ -1,18 +1,37 @@
-from nn import *
+import numpy as np
 
-X_train = np.random.randn(1000, 2)
-y_train = np.array([4*a + b for a, b in X_train])
+from nn import NN as NN1
+from nn2 import NN as NN2
+from nn2 import Layer as Layer
 
-X_test = np.random.randn(1000, 2)
-y_test = np.array([4*a + b for a, b in X_test])
+epochs = 10
+learning_rate = 0.12
+batch_size = 32
+
+X_train = np.random.rand(1000, 2)
+y_train = np.array([5*a + 2*b for a, b in X_train])
+noise_train = np.random.normal(0, 0.5, y_train.shape)
+y_train_noisy = y_train + noise_train
+
+X_test = np.random.rand(1000, 2)
+y_test = np.array([5*a + 2*b for a, b in X_test])
+noise_test = np.random.normal(0, 0.5, y_test.shape)
+y_test_noisy = y_test + noise_test
 
 training_data = list(zip(X_train, y_train))
 test_data = list(zip(X_test, y_test))
 
-net = NN([2, 3, 1])
-#net.train(training_data= training_data, test_data= test_data, epochs=10, learning_rate=0.1)
-#train_data = net.giveHypothesis(test_data=test_data)
-net.mini_batch_train(training_data= training_data, test_data= test_data, epochs=20, learning_rate=0.1)
-#train_mini_data = net.giveHypothesis(test_data=test_data)
+#----------------------------------------------------------------------------------------------------------#
+
+layer_sizes = [2, 3, 1]
+nn1 = NN1(layer_sizes)
+nn1.mini_batch_train(training_data, test_data, epochs=epochs, learning_rate=learning_rate, batch_size=batch_size)
 
 #----------------------------------------------------------------------------------------------------------#
+
+input = Layer(0, 2, 'input', True)
+hidden_one = Layer(2, 3, 'linear', False)
+output = Layer(3, 1, 'linear', False)
+Layers = [input, hidden_one, output]
+nn2 = NN2(layers=Layers)
+nn2.mini_batch_train(training_data=training_data, test_data=test_data, epochs=epochs, learning_rate=learning_rate, batch_size= batch_size)
