@@ -83,7 +83,7 @@ class NN:
                 gradiant_sums['B'+str(l)] += bias_gradiant['B'+str(l)]
     
         for l in range(1, self.num_layers):
-            layer = self.layers[1]
+            layer = self.layers[l]
             layer.weights -= ((gradiant_sums['W'+str(l)]) * (learning_rate / batch_len))
             layer.bias -= ((gradiant_sums['B'+str(l)]) * (learning_rate / batch_len))
 
@@ -134,12 +134,12 @@ class NN:
             nextLayer = self.layers[l+1]
 
             z = self.cache['zs'+str(l)]
-            liner_der_z = currlayer.get_activation_deriv(z)
+            der_z = currlayer.get_activation_deriv(z)
 
             a = self.cache['activations'+str(l-1)]
             w = nextLayer.weights
 
-            delta_l = np.dot(w.T, delta_l) * liner_der_z
+            delta_l = np.dot(w.T, delta_l) * der_z
 
             weight_gradiant['W'+str(l)] = np.dot(delta_l, a.T)
             bias_gradiant['B'+str(l)] = delta_l
@@ -153,6 +153,8 @@ class NN:
         for x, y in data:
             output = self.feedforward(x)
             loss += np.sum((output - y) ** 2) / 2
+
+        return loss
 
     def quad_cost_deriv(self, x, y):
             loss_deriv = x - y
@@ -197,4 +199,4 @@ hidden_one = Layer(2, 3, 'linear', False)
 output = Layer(3, 1, 'linear', False)
 Layers = [input, hidden_one, output]
 nn = NN(layers=Layers)
-nn.mini_batch_train(training_data=training_data, test_data=test_data, epochs=10, learning_rate=0.1)
+nn.mini_batch_train(training_data=training_data, test_data=test_data, epochs=10, learning_rate=0.1, batch_size= 5)
