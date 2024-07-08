@@ -12,6 +12,7 @@ class Layer:
             self.bias = None
         
         self.activation = activation #i'll define a custom activation to ignore inputs
+        self.final_res = []
 
     #to compute the activation
     def get_activation(self, z):
@@ -151,6 +152,7 @@ class NN:
         loss = 0
         for x, y in data:
             output = self.feedforward(x)
+            #print(output, y)
             loss += np.sum((output - y) ** 2) / 2
 
         return loss
@@ -163,11 +165,19 @@ class NN:
         correct = 0
         total = len(data)
 
-        for x, y in data:
-            output = self.feedforward(x)
-            if np.isclose(output, y, atol= 1e-9):
-                correct += 1
-    
+        last_layer = self.layers[-1]
+        if last_layer.activation != 'sigmoid':
+            for x, y in data:
+                output = self.feedforward(x)
+                if np.isclose(output, y, atol= 1e-9):
+                    correct += 1
+        else: #only works for binary classification, not for multiheaded classification
+            for x, y in data:
+                output = self.feedforward(x)
+                pred = 1 if output > 0.5 else 0
+                if pred == y:
+                    correct += 1
+
         return correct / total
     
     def get_results(self, data):

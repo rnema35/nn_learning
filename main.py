@@ -43,17 +43,17 @@ nn2 = NN2(layers=Layers)
 
 #Need to add accuracy function for a classification task!!
 
-epochs = 10
+epochs = 15
 learning_rate = 0.1
-batch_size = 32
+batch_size = 1
 
 X_train = np.random.rand(1000, 2)
-y_train = np.array([5*a + 2*b for a, b in X_train])
+y_train = np.array([1 if 5*a + 2*b > 5 else 0 for a, b in X_train])
 noise_train = np.random.normal(0, 0.5, y_train.shape)
 y_train_noisy = y_train + noise_train
 
 X_test = np.random.rand(1000, 2)
-y_test = np.array([5*a + 2*b for a, b in X_test])
+y_test = np.array([1 if 5*a + 2*b > 5 else 0 for a, b in X_test])
 noise_test = np.random.normal(0, 0.5, y_test.shape)
 y_test_noisy = y_test + noise_test
 
@@ -61,11 +61,10 @@ training_data = list(zip(X_train, y_train))
 test_data = list(zip(X_test, y_test))
 
 input = Layer(0, 2, 'input', True)
-hidden_one = Layer(2, 3, 'sigmoid', False)
+hidden_one = Layer(2, 3, 'relu', False)
 output = Layer(3, 1, 'sigmoid', False)
 Layers = [input, hidden_one, output]
 
 nn2 = NN2(layers=Layers)
 nn2.mini_batch_train(training_data=training_data, test_data=test_data, epochs=epochs, learning_rate=learning_rate, batch_size= batch_size)
-
 #----------------------------------------------------------------------------------------------------------#
