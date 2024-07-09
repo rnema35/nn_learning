@@ -14,6 +14,9 @@ A repo to implement different concepts I've learned about neural nets in a simpl
 -rnn.py is going to be for RNNS and LSTMs lol, no idea how this is going to go
 
 Resources:
+
 http://neuralnetworksanddeeplearning.com/chap1.html by Micheal Neilson (for traditional NN)
+
 https://www.freecodecamp.org/news/building-a-neural-network-from-scratch/ by Aditya (for traditional NN)
+
 https://stanford.edu/~shervine/teaching/cs-230/cheatsheet-recurrent-neural-networks by Afshine Amidi and Shervine Amidi (for RNN)
