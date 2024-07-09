@@ -5,6 +5,7 @@ from nn2 import NN as NN2
 from nn2 import Layer as Layer
 
 #------------------------------------ Linear Activation Testing -------------------------------------------#
+
 epochs = 20
 learning_rate = 0.01
 batch_size = 5
@@ -37,11 +38,7 @@ Layers = [input, hidden_one, output]
 nn2 = NN2(layers=Layers)
 #nn2.mini_batch_train(training_data=training_data, test_data=test_data, epochs=epochs, learning_rate=learning_rate, batch_size= batch_size)
 
-
 #------------------------------------ Sigmoid Activation Testing -------------------------------------------#
-
-
-#Need to add accuracy function for a classification task!!
 
 epochs = 15
 learning_rate = 0.1

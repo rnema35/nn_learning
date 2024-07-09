@@ -38,4 +38,22 @@ processing one point at a time:
 initialiizing epochs gives me a loss of 500, but at 15 only 250, 
     what could be the case
     loss is calculated per epcoh seperaltey, the amount of epochs should not matter
-    
+-> turns out I wasn't doing my accuracy or loss function properly!
+
+---------------------------------------------------------------------------------
+
+RNNS
+
+Lets do feed forward first:
+-How do we get the first activation:
+    Should have an initial a0 to get things started (or it could be 0)
+    -> a_1 = activation_function( W_ax * X_1 + W_aa * a_0 + b_a)
+    -> y_1 = activation_functoin( W_ay * a1 + b_y ) 
+    So you have 5 (6?) things to initialize:
+        - W_ax
+        - W_aa
+        - W_ay
+        - b_a
+        - b_y
+        - a_0 but this can be kept as 0 matrix
+    -> Then you feed the a_1 to layer a_2 and so and so on
