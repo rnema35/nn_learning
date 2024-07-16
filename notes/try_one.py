@@ -1,6 +1,5 @@
 import numpy as np
 import math
-import matplotlib as plt
 
 class NN: 
     def __init__(self, layers) -> None:

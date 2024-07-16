@@ -57,3 +57,14 @@ Lets do feed forward first:
         - b_y
         - a_0 but this can be kept as 0 matrix
     -> Then you feed the a_1 to layer a_2 and so and so on
+
+
+what would the data to train on be?
+-> make some time series data like forcasting a price
+lets say i have 1000 time points:
+    - I can split it into 1000 groups (990?) where i do 0-10, 1-11
+        so for 0-10, i predict timepoint 11
+        and for 1-11 i predict timepoint 12
+    to have 1000 data points, i will have an array of 1000 x 10
+        [ [10 time points]_0, []_1, .... []_999 ]
+    
