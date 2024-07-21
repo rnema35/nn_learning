@@ -67,4 +67,11 @@ lets say i have 1000 time points:
         and for 1-11 i predict timepoint 12
     to have 1000 data points, i will have an array of 1000 x 10
         [ [10 time points]_0, []_1, .... []_999 ]
-    
+
+
+ok so what is happening
+-> have a bunch of sequential data
+    -> shuffle it around'
+--> per batch, take a sequence, 
+    -> go through it (get the the loss and add it up)
+--> 

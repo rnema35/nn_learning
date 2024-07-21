@@ -44,7 +44,7 @@ epochs = 15
 learning_rate = 0.1
 batch_size = 1
 
-X_train = np.random.rand(1000, 2)
+X_train = np.random.rand(2000, 2)
 y_train = np.array([1 if 5*a + 2*b > 5 else 0 for a, b in X_train])
 noise_train = np.random.normal(0, 0.5, y_train.shape)
 y_train_noisy = y_train + noise_train
